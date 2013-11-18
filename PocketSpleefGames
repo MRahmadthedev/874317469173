@@ -11,7 +11,7 @@ class=PocketSpleefGames
 */
 
 define("CONVERT_COEFFICIENT", 20);
-define("DEFAULT_COIN", 12);
+define("DEFAULT_POINT", 12);
 define("LINE_BREAK", 45);
 
 class PocketSpleefGames implements Plugin{
@@ -156,20 +156,20 @@ class PocketSpleefGames implements Plugin{
 				if (is_numeric($data["cause"])) {
 					$entity = $this->api->entity->get($data["cause"]);
 					if ($entity instanceof Entity and $entity->class === ENTITY_PLAYER) {
-						$killer = $entity->name;
-						if (!isset($this->players[$killer])) {
-							$this->kick($killer, "unknown", false, false);
+						$er = $entity->name;
+						if (!isset($this->players[$er])) {
+							$this->kick($er, "unknown", false, false);
 							break;
 						}
-						$this->score[$dead]["cause"] = $killer;
-						$this->score[$killer]["kill"][] = $dead;
-						$reason = "killed by $killer!";
-						$this->giveEXP($killer, $this->config["exp"]["kill"]);
-						$coin = $this->kit->grantPocketCash($dead);
-						$this->kit->grantPocketCash($killer, $coin);
+						$this->score[$dead]["cause"] = $er;
+						$this->score[$er][""][] = $dead;
+						$reason = "ed by $er!";
+						$this->giveEXP($er, $this->config["exp"][""]);
+						$point = $this->kit->grantPocketCash($dead);
+						$this->kit->grantPocketCash($er, $point);
 					} else {
-						$reason = "killed.";
-						$this->score[$dead]["cause"] = "killed";
+						$reason = "ed.";
+						$this->score[$dead]["cause"] = "ed";
 					}
 				} else {
 					$reason = "accident.";
@@ -625,7 +625,7 @@ Spleef
 		$this->broadcast(" ");
 		$this->broadcast(FORMAT_YELLOW."================================================");
 		$this->broadcast(" ");
-		$this->broadcast(FORMAT_YELLOW."The game has begun!");
+		$this->broadcast(FORMAT_YELLOW."The spleef games have started!");
 		$this->broadcast(FORMAT_YELLOW."There are ".$nop." players participating.");
 		$this->broadcast(FORMAT_YELLOW."Good Luck!");
 		$this->broadcast(" ");
@@ -781,7 +781,6 @@ Spleef
 		$cfg = $this->config["times"];
 		$lobby = $cfg["lobby"] + $fix;
 		$invincible = $lobby + $cfg["invincible"];
-		$play = $invincible + $cfg["play"];
 		$finish = $play + $cfg["finish"];
 		$this->s_id["invincible"] = $this->schedule($lobby, "gameInvincible", array());
 		$this->s_id["play"] = $this->schedule($invincible, "gamePlay", array());
@@ -880,7 +879,7 @@ Spleef
 		$this->score = array();
 		if (count($this->players) === 0)	return;
 		foreach ($this->players as $player) {
-			$this->score[$player->username] = array("kill" => array(), "cause" => " - ", "exp" => (int) 0);
+			$this->score[$player->username] = array("" => array(), "cause" => " - ", "exp" => (int) 0);
 		}
 	}
 
@@ -1055,27 +1054,27 @@ Spleef
 			} else {
 				$output .= FORMAT_RED." ";
 			}
-			$kill = count($score["kill"]);
-			$output .= $user."   ".FORMAT_RESET."[kill: ".$kill." death: ".$score["cause"]."]\n";
+
+			$output .= $user."   ".FORMAT_RESET." death: ".$score["cause"]."]\n";
 		}
 	}
 
 	public function showRecords(&$output) {
 		$records = $this->getRecords();
 		foreach ($records as $rec) {
-			$kd = $this->kdFormula($rec["kill"], $rec["death"]);
+			$d = $this->dFormula($rec["death"]);
 			$name = substr($rec["username"], 0, 15);
 			$name = $name . str_repeat(" ", 15 - strlen($name));
-			$output .= $name."| level:".FORMAT_AQUA.$rec["level"].FORMAT_RESET." exp:".FORMAT_LIGHT_PURPLE.$rec["exp"].FORMAT_RESET." playing:".FORMAT_GREEN.$rec["times"].FORMAT_RESET." win:".FORMAT_DARK_AQUA.$rec["win"].FORMAT_RESET." kill:".FORMAT_YELLOW.$rec["kill"].FORMAT_RESET." death:".FORMAT_RED.$rec["death"].FORMAT_RESET." k/d:".FORMAT_BLUE.$kd.FORMAT_RESET."\n";
+			$output .= $name."| level:".FORMAT_AQUA.$rec["level"].FORMAT_RESET." exp:".FORMAT_LIGHT_PURPLE.$rec["exp"].FORMAT_RESET." playing:".FORMAT_GREEN.$rec["times"].FORMAT_RESET." win:".FORMAT_DARK_AQUA.$rec["win"].FORMAT_RESET." :".FORMAT_YELLOW.$rec[""].FORMAT_RESET." death:".FORMAT_RED.$rec["death"].FORMAT_RESET." k/d:".FORMAT_BLUE.$d.FORMAT_RESET."\n";
 		}
 	}
 
 	public function showAccountInfo(Player $player) {
 		$rec = $this->getAccount($player->username);
 		$server = $this->api->getProperty("server-name");
-		$kd = $this->kdFormula($rec["kill"], $rec["death"]);
+		$d = $this->dFormula($rec[""], $rec["death"]);
 		$quota = $this->levelFormula($rec["level"] + 1);
-		$coin = (String) $this->kit->grantPocketCash($player->username);
+		$point = (String) $this->kit->grantPocketCash($player->username);
 		$player->sendChat(" ");
 		$player->sendChat(" ");
 		$player->sendChat("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
@@ -1083,7 +1082,7 @@ Spleef
 		$player->sendChat("PocketSpleefGames server:");
 		$player->sendChat("             ".$server);
 		$player->sendChat("name: ".$player->username."        level: ".$rec["level"]."  exp: ".$rec["exp"]."/".$quota);
-		$player->sendChat(" win: ".$rec["win"]."  kill: ".$rec["kill"]."  death: ".$rec["death"]."  k/d: ".$kd."  coin: ".$coin);
+		$player->sendChat(" win: ".$rec["win"]."  : ".$rec[""]."  death: ".$rec["death"]."  k/d: ".$d."  point: ".$point);
 		$player->sendChat(" ");
 		$player->sendChat("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
 	}
@@ -1315,7 +1314,7 @@ Spleef
 						"finish" => 30,
 				),
 				"exp" => array(
-						"kill" => 20,
+						"" => 20,
 						"win-tournament" => 50,
 				),
 				"announce" => array(
@@ -1397,15 +1396,15 @@ Spleef
 		return $result;
 	}
 
-	private function kdFormula($kill, $death) {
-		if ($kill === 0 and $death === 0) {
-			$kd = " - ";
-		} elseif ($kill === 0) {
-			$kd = (String) "0.00";
+	private function dFormula($, $death) {
+		if ($ === 0 and $death === 0) {
+			$d = " - ";
+		} elseif ($ === 0) {
+			$d = (String) "0.00";
 		} else {
-			$kd = bcdiv($kill, $kill + $death, 2);
+			$d = bcdiv($death, 2);
 		}
-		return $kd;
+		return $d;
 	}
 
 	private function levelFormula($level) {
@@ -1432,7 +1431,7 @@ Spleef
 				lastjoin TEXT,
 				times INTEGER NOT NULL DEFAULT '0',
 				win INTEGER NOT NULL DEFAULT '0',
-				kill INTEGER NOT NULL DEFAULT '0',
+				 INTEGER NOT NULL DEFAULT '0',
 				death INTEGER NOT NULL DEFAULT '0',
 				lose INTEGER NOT NULL DEFAULT '0',
 				exp INTEGER NOT NULL DEFAULT '0',
@@ -1445,12 +1444,12 @@ Spleef
 		if ($winner !== false) {
 			$this->db->exec("UPDATE records SET win = win + 1, lose = lose - 1, death = death - 1 WHERE username = '" . $winner . "';");
 		}
-		$stmt = $this->db->prepare("UPDATE records SET times = times + 1, exp = exp + :exp, kill = kill + :kill, lose = lose + 1, death = death + 1, lastjoin = datetime ('now', 'localtime') WHERE username = :username");
+		$stmt = $this->db->prepare("UPDATE records SET times = times + 1, exp = exp + :exp,  =  + :, lose = lose + 1, death = death + 1, lastjoin = datetime ('now', 'localtime') WHERE username = :username");
 		foreach ($scores as $username => $score) {
 			$stmt->clear();
-			$kill = count($score["kill"]);
+			$ = count($score[""]);
 			$stmt->bindValue(":exp", $score["exp"]);
-			$stmt->bindValue(":kill", $kill);
+			$stmt->bindValue(":", $);
 			$stmt->bindValue(":username", $username);
 			$stmt->execute();
 			$rec = $this->getAccount($username);
@@ -1499,16 +1498,16 @@ Spleef
 }
 
 class KitManager{
-	private $api, $config, $kitdb, $coin, $players;
+	private $api, $config, $kitdb, $point, $players;
 
 	public function __construct(ServerAPI $api, $server = false) {
 		$this->api = $api;
-		$this->coin = array();
+		$this->point = array();
 		$this->players = array();
 		$this->config = array(
 				"max-kit" => 5,
 				"max-item" => 5,
-				"max-skill" => 5,
+				"max-s" => 5,
 		);
 	}
 
@@ -1517,13 +1516,13 @@ class KitManager{
 		if ($user instanceof Player) {
 			$user = $user->username;
 		}
-		$coin = $this->grantPocketCash($user);
+		$point = $this->grantPocketCash($user);
 		$kit = $this->get($kitname);
 		if ($kit === false) {
 			$output .= "The kit \"$kitname\" doesn't exist!\n";
-		} else if ($coin < $kit["price"]) {
-			$output .= "You are short of coin to buy this kit!\n";
-			$output .= "coin: $coin,  price: ".$kit["price"]."\n";
+		} else if ($point < $kit["price"]) {
+			$output .= "You are short of point to buy this kit!\n";
+			$output .= "point: $point,  price: ".$kit["price"]."\n";
 		} elseif ($level < $kit["level"]) {
 			$output .= "You are short of level to buy this kit!\n";
 			$output .= "your level: $level,  kit's level ".$kit["level"]."\n";
@@ -1547,7 +1546,7 @@ class KitManager{
 					$player->addItem($kit["id".$i], $kit["meta".$i], $kit["count".$i], true);
 				}
 				/*
-				 if (!empty($kit["skill".$i])) {
+				 if (!empty($kit["s".$i])) {
 				}
 				*/
 				$this->players[$user][$kitname] = false;
@@ -1591,8 +1590,8 @@ class KitManager{
 		$k = $sets["item"][$i];
 		$this->kitdb->exec("UPDATE kits SET id'".$i."' = '".$k["id"]."', meta'".$i."' = '".$k["meta"]."', count'".$i."' = '".$k["count"]."' WHERE name = '".$name."';");
 		}
-		if (isset($sets["skill"][$i]) and $this->getSkill($sets["skill"][$i]) === false) {
-		$this->kitdb->exec("UPDATE kits SET skill'".$i."' = '".$sets["skill"][$i]."' WHERE name = '".$name."';");
+		if (isset($sets["s"][$i]) and $this->getS($sets["s"][$i]) === false) {
+		$this->kitdb->exec("UPDATE kits SET s'".$i."' = '".$sets["s"][$i]."' WHERE name = '".$name."';");
 		}
 		}
 		*/
@@ -1638,12 +1637,12 @@ class KitManager{
 		return $kits;
 	}
 
-	public function grantPocketCash($user, $coin = 0) {
-		if (!array_key_exists($user, $this->coin)) {
-			$this->coin[$user] = DEFAULT_COIN;
+	public function grantPocketCash($user, $point = 0) {
+		if (!array_key_exists($user, $this->point)) {
+			$this->point[$user] = DEFAULT_POINT;
 		}
-		$this->coin[$user] += $coin;
-		return $this->coin[$user];
+		$this->point[$user] += $point;
+		return $this->point[$user];
 	}
 
 	public function showKitInfo($kitname) {
@@ -1667,10 +1666,10 @@ class KitManager{
 		console(FORMAT_GREEN."#SKILL");
 		for ($i = 0; $i <= 4; $i++) {
 			$info = FORMAT_YELLOW."  slot".$i.FORMAT_RESET.":  ";
-			if ($kit["skill".$i] === null) {
+			if ($kit["s".$i] === null) {
 				$info .= "    -";
 			} else {
-				$info .= "\"".$kit["skill".$i]."\"";
+				$info .= "\"".$kit["s".$i]."\"";
 			}
 			console($info);
 		}
@@ -1697,9 +1696,9 @@ class KitManager{
 	public function showAccountInfo(Player $player) {
 		$user = $player->username;
 		$eq = $this->getEquipment($user);
-		$coin = $this->grantPocketCash($user);
+		$point = $this->grantPocketCash($user);
 		$player->sendChat("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\n");
-		$output = "coin: ".$coin."   kit: ";
+		$output = "point: ".$point."   kit: ";
 		if (empty($eq)) {
 			$output .= "-";
 		} else {
@@ -1713,7 +1712,7 @@ class KitManager{
 
 	public function resetParams() {
 		$this->players = array();
-		$this->coin = array();
+		$this->point = array();
 	}
 
 	public function DB($path) {
@@ -1727,7 +1726,7 @@ class KitManager{
 				id0 INTEGER, id1 INTEGER, id2 INTEGER, id3 INTEGER, id4 INTEGER,
 				meta0 INTEGER, meta1 INTEGER, meta2 INTEGER, meta3 INTEGER, meta4 INTEGER,
 				count0 INTEGER, count1 INTEGER, count2 INTEGER, count3 INTEGER, count4 INTEGER,
-				skill0 INTEGER, skill1 INTEGER, skill2 INTEGER, skill3 INTEGER, skill4 INTEGER
+				s0 INTEGER, s1 INTEGER, s2 INTEGER, s3 INTEGER, s4 INTEGER
 		)"
 		);
 	}
