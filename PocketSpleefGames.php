@@ -70,6 +70,7 @@ class PocketSpleefGames implements Plugin{
 				}
 
 			case "player.spawn":
+				$this->api->console->run("give ".$data->username." diamond_shovel")
 				if (!$this->switch["server.gate"]) {
 					$data->blocked = true;
 					$data->sendChat(" ");
@@ -579,7 +580,6 @@ Spleef
 			$this->gameStop();
 			return;
 		}
-		$this->cleanDropedItems();
 		$this->gameLobby();
 	}
 
