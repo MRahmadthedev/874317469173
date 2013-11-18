@@ -70,7 +70,6 @@ class PocketSpleefGames implements Plugin{
 				}
 
 			case "player.spawn":
-                                $this->api->console->run("whitelist off");
 				if (!$this->switch["server.gate"]) {
 					$data->blocked = true;
 					$data->sendChat(" ");
@@ -575,6 +574,7 @@ Spleef
 	public function gameReady($field = false) {
 		$this->status = "ready";
 		$this->resetParams();
+                $this->api->console->run("whitelist off");
 		if (!$this->setField($field)) {
 			$this->gameStop();
 			return;
