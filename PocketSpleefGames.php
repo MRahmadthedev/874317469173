@@ -70,7 +70,6 @@ class PocketSpleefGames implements Plugin{
 				}
 
 			case "player.spawn":
-				$this->api->console->run("give ".$data->username." diamond_shovel")
 				if (!$this->switch["server.gate"]) {
 					$data->blocked = true;
 					$data->sendChat(" ");
@@ -580,6 +579,7 @@ Spleef
 			$this->gameStop();
 			return;
 		}
+		$this->cleanDropedItems();
 		$this->gameLobby();
 	}
 
@@ -637,8 +637,8 @@ Spleef
 
 	public function gamePlay() {
 		$this->status = "play";
-		$this->tool("pvp", true);
-		$this->broadcast(FORMAT_YELLOW."[SpleefGames] You are no longer invincible.".FORMAT_RESET."");
+		$this->tool("pvp", false);
+		$this->broadcast(FORMAT_YELLOW."[SpleefGames] Good luck!.".FORMAT_RESET."");
 		$this->countdown($this->config["times"]["play"]);
 	}
 
@@ -1244,27 +1244,11 @@ Spleef
 		}
 	}
 
-	public function confiscateItems() {
-		$players = $this->api->player->getAll();
-		if (count($players) == 0)	return;
-		$air = BlockAPI::getItem(Air, 0, 0);
-		foreach ($players as $player) {
-			foreach ($player->inventory as $s => $item) {
-				if ($item->getID() !== Air) {
-					$player->inventory[$s] = $air;
-				}
-			}
-			$player->armor = array($air, $air, $air, $air);
-			$player->sendInventorySlot();
-			$player->sendArmor($player);
-		}
-	}
-
 	public function lobbyAnnounce() {
 		$msg = $this->config["announce"];
 		if (count($msg) === 0)	return;
 		$no = rand(0, count($msg) - 1);
-		$this->broadcast(FORMAT_DARK_AQUA."[TIPS] ".$msg[$no]);
+		$this->broadcast(FORMAT_DARK_AQUA."[SpleefGames] ".$msg[$no]);
 	}
 
 	public function givePrize($username) {
@@ -1311,22 +1295,21 @@ Spleef
 				"lock-time" => "day",
 				"times" => array(
 						"lobby" => 300,
-						"play" => 1000,
-						"invincible" => 30,
+						"play" => 600,
+						"invincible" => 300,
 						"finish" => 30,
 				),
 				"exp" => array(
-						"" => 20,
 						"win-tournament" => 50,
 				),
 				"announce" => array(
-						"Your inventory will be emptied when game begins.",
-						"SpleefGames is developed by @omattyao_yk",
-						"You should not carry any items in the game.",
+						"Your inventory will have a diamond shovel at start!",
+						"SpleefGames is developed by @codmadnesspro",
+						"Visit codcraftserver.net for support!",
 						"This game is not the team system. All the others are enemies.",
 						"Who survived at the very end will be the winner.",
-						"You can buy Kits by using \"/kit\".",
-						"Coin has been provided when you joined.",
+						"No mods allowed at any time.",
+						"Points will be provided at first join.",
 				),
 				"field" => array(),
 		);
