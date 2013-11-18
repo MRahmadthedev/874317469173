@@ -70,6 +70,7 @@ class PocketSpleefGames implements Plugin{
 				}
 
 			case "player.spawn":
+                                $this->api->console->run("whitelist off");
 				if (!$this->switch["server.gate"]) {
 					$data->blocked = true;
 					$data->sendChat(" ");
@@ -83,6 +84,7 @@ class PocketSpleefGames implements Plugin{
 					$data->sendChat("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
 					$data->close("game is going on.", false);
 					$this->broadcast("<server> ".$data->username." left the game.");
+                                        $this->api->console->run("whitelist on");
 					return false;
 				}
 				if ($this->switch["first.spawn"] instanceof Position) {
